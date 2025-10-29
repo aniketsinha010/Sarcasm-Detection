@@ -1,0 +1,62 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarcastic Headline Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📰 Sarcastic Headline Detector</h1>
+            <p class="subtitle">Detect sarcasm in news headlines using deep learning — with 92%+ accuracy!</p>
+        </div>
+
+        <!-- 📦 Project Info Box -->
+        <div class="info-box">
+            <div class="info-section">
+                <h2>🧠 About the Model</h2>
+                <ul>
+                    <li><strong>Architecture:</strong> Bidirectional LSTM with Embedding Layer</li>
+                    <li><strong>Framework:</strong> TensorFlow & Keras</li>
+                    <li><strong>Input:</strong> Cleaned text (lowercase, contractions expanded)</li>
+                    <li><strong>Output:</strong> Binary classification (Sarcastic / Not Sarcastic)</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2>📊 Dataset & Performance</h2>
+                <ul>
+                    <li><strong>Dataset:</strong> 26,000+ labeled headlines</li>
+                    <li><strong>Split:</strong> 70% train / 15% val / 15% test</li>
+                    <li><strong>Accuracy:</strong> ~92%</li>
+                    <li><strong>F1-Score:</strong> ~0.91</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2>🛠️ Tech Stack</h2>
+                <ul>
+                    <li>Python 3.10+</li>
+                    <li>TensorFlow 2.16</li>
+                    <li>Flask (Backend)</li>
+                    <li>HTML5 + CSS3 (Frontend)</li>
+                    <li>Pickle, JSON, Regex, Contractions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 🚀 Start Prediction Button -->
+        <div class="button-container">
+            <a href="{{ url_for('predict_page') }}" class="start-button">🚀 Start Prediction</a>
+        </div>
+    </div>
+
+    <footer>
+        Aniket Sinha | Flask • TensorFlow • Deep Learning
+    </footer>
+</body>
+</html>

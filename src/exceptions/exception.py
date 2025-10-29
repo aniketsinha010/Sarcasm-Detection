@@ -1,21 +1,21 @@
 # src/exceptions/exception.py
 import sys
-from src.logging.logger import logging  # This import triggers logging setup
+import logging
 
-def error_message_detail(error, error_detail: sys):
-    _, _, exc_tb = error_detail.exc_info()
+logger = logging.getLogger(__name__)
+
+def error_message_detail(error):
+    _, _, exc_tb = sys.exc_info()
+    if exc_tb is None:
+        return str(error)
     file_name = exc_tb.tb_frame.f_code.co_filename
-    error_message = (
-        f"Error occurred in Python script [{file_name}] "
-        f"line [{exc_tb.tb_lineno}] error message [{str(error)}]"
-    )
-    return error_message
+    return f"Error occurred in script [{file_name}] line [{exc_tb.tb_lineno}]: {str(error)}"
 
 class CustomException(Exception):
-    def __init__(self, error_message, error_detail: sys):
+    def __init__(self, error_message):
         super().__init__(error_message)
-        self.error_message = error_message_detail(error_message, error_detail=error_detail)
-        logging.error(self.error_message)
+        self.error_message = error_message_detail(error_message)
+        logger.error(self.error_message)
 
     def __str__(self):
         return self.error_message

@@ -1,82 +1,273 @@
+/* static/style.css */
 body {
-    font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
-    color: white;
-    text-align: center;
-    padding: 30px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0f0f1b, #1a1a2e);
+    color: #e6e6ff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
 }
 
 .container {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: rgba(255, 255, 255, 0.05);
+    max-width: 800px;
+    margin: 40px auto;
     padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
-h1 {
-    color: #00b4d8;
+.header h1 {
+    color: #4cc9f0;
     font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
 }
 
 .subtitle {
-    color: #b0b0b0;
-    margin-bottom: 20px;
+    color: #a9a9d6;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* === Prediction Form === */
+.prediction-form {
+    margin: 30px 0;
 }
 
 textarea {
     width: 100%;
-    height: 120px;
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-    resize: none;
-    background: #121212;
-    color: #fff;
-    outline: none;
-    font-size: 1em;
+    height: 140px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(100, 100, 150, 0.3);
+    background: rgba(20, 20, 40, 0.6);
+    color: #f0f0ff;
+    font-size: 1.05rem;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
 }
 
-button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: linear-gradient(90deg, #00b4d8, #0077b6);
+textarea:focus {
+    outline: none;
+    border-color: #4cc9f0;
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+}
+
+.predict-button {
+    display: inline-block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg, #4cc9f0, #4361ee);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: linear-gradient(90deg, #0096c7, #023e8a);
-    transform: scale(1.03);
-}
-
-.result {
-    margin-top: 25px;
-    padding: 20px;
     border-radius: 12px;
-    background-color: rgba(0, 180, 216, 0.15);
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(76, 201, 240, 0.25);
 }
 
-.result.sarcastic {
-    border-left: 6px solid #ff006e;
+.predict-button:hover {
+    background: linear-gradient(90deg, #3a0ca3, #4361ee);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 201, 240, 0.4);
 }
 
-.result.not {
-    border-left: 6px solid #06d6a0;
+/* === Result Cards === */
+.result-card {
+    margin: 30px 0;
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(30, 30, 60, 0.5);
+    animation: fadeIn 0.5s ease;
 }
 
-.error {
-    color: #ff4b4b;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-card.sarcastic {
+    border-top: 4px solid #ff6b6b;
+}
+
+.result-card.not {
+    border-top: 4px solid #06d6a0;
+}
+
+.result-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.result-card h2 {
+    font-size: 2rem;
+    margin: 0 0 15px;
+    color: #f8f9ff;
+}
+
+.confidence {
+    font-size: 1.1rem;
+    color: #b0b0e0;
+}
+
+/* === Error Card === */
+.error-card {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 107, 107, 0.15);
+    border-radius: 12px;
+    border-left: 4px solid #ff6b6b;
+    color: #ff9e9e;
+}
+
+.error-card h3 {
+    margin-top: 0;
+    color: #ff6b6b;
+}
+
+/* === Navigation === */
+.back-link {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.back-link a {
+    color: #4cc9f0;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+/* === Footer === */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px;
+    color: #8888cc;
+    font-size: 0.95rem;
+    border-top: 1px solid rgba(100, 100, 150, 0.1);
+}
+
+/* === Responsive Design === */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    textarea {
+        height: 120px;
+        padding: 14px;
+    }
+
+    .result-card h2 {
+        font-size: 1.7rem;
+    }
+
+    .predict-button {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
+
+
+/* === Info Box (Home Page) === */
+.info-box {
+    background: rgba(30, 30, 60, 0.45);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 30px 0;
+    border: 1px solid rgba(100, 100, 150, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.info-section {
+    margin-bottom: 24px;
+}
+
+.info-section:last-child {
+    margin-bottom: 0;
+}
+
+.info-section h2 {
+    color: #4cc9f0;
+    font-size: 1.4rem;
+    margin: 0 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-section ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.info-section li {
+    padding: 6px 0;
+    color: #d0d0ff;
+    font-size: 1.02rem;
+}
+
+.info-section li strong {
+    color: #f8f9ff;
+    font-weight: 600;
+}
+
+/* === Button Container === */
+.button-container {
+    text-align: center;
     margin-top: 20px;
 }
 
-footer {
-    margin-top: 40px;
-    color: #bbb;
-    font-size: 0.9em;
+.start-button {
+    display: inline-block;
+    padding: 14px 42px;
+    background: linear-gradient(90deg, #4361ee, #3a0ca3);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.6px;
+    transition: all 0.35s ease;
+    box-shadow: 0 6px 18px rgba(67, 97, 238, 0.4);
+    min-width: 220px;
+}
+
+.start-button:hover {
+    background: linear-gradient(90deg, #3a0ca3, #4361ee);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(67, 97, 238, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .info-box {
+        padding: 20px;
+    }
+
+    .start-button {
+        padding: 12px 32px;
+        font-size: 1.05rem;
+        min-width: 180px;
+    }
 }

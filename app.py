@@ -1,72 +1,81 @@
-from flask import Flask, render_template, request, jsonify
-import pickle, json, tensorflow as tf
+# app.py
+import os
+import pickle
+import json
+import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from src.utility.preprocess import clean_text
-from src.exceptions.exception import CustomException
-import sys
+from flask import Flask, render_template, request, jsonify
+import logging
 
-# Initialize Flask app
+# 🚀 Initialize logging FIRST (like your training pipeline)
+from src.logging.logger import logger  # Triggers basicConfig
+
+# Use module logger
+app_logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 
-# Load model, tokenizer, and config once
+# Load model, tokenizer, config ONCE at startup
 def load_resources():
-    try:
-        model = tf.keras.models.load_model("artifacts/sarcasm_detector.h5")
-        with open("artifacts/tokenizer.pkl", "rb") as f:
-            tokenizer = pickle.load(f)
-        with open("artifacts/preprocessing.json", "r") as f:
-            config = json.load(f)
-        return model, tokenizer, config
-    except Exception as e:
-        raise CustomException(e, sys)
+    app_logger.info("Loading model, tokenizer, and config from artifacts")
+    base_path = "artifacts"
+    model = tf.keras.models.load_model(os.path.join(base_path, "sarcasm_detector.h5"))
+    with open(os.path.join(base_path, "tokenizer.pkl"), "rb") as f:
+        tokenizer = pickle.load(f)
+    with open(os.path.join(base_path, "preprocessing.json"), "r") as f:
+        config = json.load(f)
+    app_logger.info("All resources loaded successfully.")
+    return model, tokenizer, config
 
+# Global resources — loaded once
 model, tokenizer, config = load_resources()
 max_length = config["max_length"]
 
-# Home route (renders web UI)
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        headline = request.form["headline"]
+# Import after logging is ready
+from src.utility.preprocess import clean_text
+from src.exceptions.exception import CustomException
+from src.model.predict import predict_sarcasm
 
-        if not headline.strip():
-            return render_template("index.html", error="Please enter a headline first.")
+
+# =============== ROUTES ===============
+
+@app.route("/")
+def home():
+    """Landing page with project description"""
+    return render_template("home.html")
+
+
+@app.route("/predict", methods=["GET", "POST"])
+def predict_page():
+    """Prediction page with form"""
+    if request.method == "POST":
+        headline = request.form.get("headline", "").strip()
+        if not headline:
+            return render_template("predict.html", error="Please enter a headline.")
+        if len(headline) > 500:
+            return render_template("predict.html", error="Headline too long (max 500 characters).")
 
         try:
-            cleaned = [clean_text(headline)]
-            seq = tokenizer.texts_to_sequences(cleaned)
-            padded = pad_sequences(seq, maxlen=max_length, padding='post')
-            pred = model.predict(padded)
-            label = "Sarcastic" if pred[0][0] > 0.5 else "Not Sarcastic"
-            emoji = "😏" if label == "Sarcastic" else "🙂"
-            confidence = float(pred[0][0]) if label == "Sarcastic" else 1 - float(pred[0][0])
-
+            result = predict_sarcasm(headline, model, tokenizer, config)
+            emoji = "😏" if result["label"] == "Sarcastic" else "🙂"
             return render_template(
-                "index.html",
+                "predict.html",
                 headline=headline,
-                result=label,
+                result=result["label"],
                 emoji=emoji,
-                confidence=f"{confidence * 100:.2f}%"
+                confidence=f"{result['confidence'] * 100:.2f}%"
             )
         except Exception as e:
-            raise CustomException(e, sys)
-    return render_template("index.html")
+            app_logger.error(f"Prediction failed: {str(e)}", exc_info=True)
+            return render_template("predict.html", error="Oops! Something went wrong.")
 
-# Optional: API route for programmatic access
-@app.route("/api/predict", methods=["POST"])
-def api_predict():
-    data = request.get_json()
-    headline = data.get("headline", "")
-    cleaned = [clean_text(headline)]
-    seq = tokenizer.texts_to_sequences(cleaned)
-    padded = pad_sequences(seq, maxlen=max_length, padding='post')
-    pred = model.predict(padded)
-    label = "Sarcastic" if pred[0][0] > 0.5 else "Not Sarcastic"
-    confidence = float(pred[0][0]) if pred[0][0] > 0.5 else 1 - float(pred[0][0])
-    return jsonify({"label": label, "confidence": confidence})
+    # GET request: show empty form
+    return render_template("predict.html")
+
+
+
+# =============== RUN ===============
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
-
-## http://127.0.0.1:5000
+    # 🔑 Disable reloader to ensure single-process execution → one clean log file
+    app.run(host="0.0.0.0", port=5000, debug=False)
